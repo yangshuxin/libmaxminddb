@@ -1,8 +1,11 @@
-language: c
+language:
+    - objective-c
 
-compiler:
-  - clang
-  - gcc
+before_install:
+    - brew update
+
+install:
+    - brew install autoconf automake libtool
 
 before_script:
   - ./bootstrap
