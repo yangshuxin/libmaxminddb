@@ -6,9 +6,10 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static uint32_t calc_chksum(MMDB_s *mmdb) {
+static uint32_t calc_chksum(MMDB_s* mmdb)
+{
     uint32_t sum = 0;
-    uint8_t *p = mmdb->file_content;
+    uint8_t* p = mmdb->file_content;
     for (int size = mmdb->file_size; --size >= 0;) {
         uint8_t v = p[size];
         sum ^= v;
@@ -18,7 +19,8 @@ static uint32_t calc_chksum(MMDB_s *mmdb) {
     return sum;
 }
 
-static int cp(const char *from, const char *to) {
+static int cp(const char* from, const char* to)
+{
     ssize_t read_bytes;
     char buf[1024];
     int f, t, rc = -1, bsize = sizeof(buf);
@@ -40,12 +42,13 @@ static int cp(const char *from, const char *to) {
 
 #define TMP_DIR "/tmp"
 
-void run_tests(int mode, const char *mode_desc) {
-    char *dest_large, *dest_small, *dest_db;
-    const char *filename_large = "GeoIP2-City-Test.mmdb";
-    const char *filename_small = "MaxMind-DB-test-mixed-24.mmdb";
-    const char *path_large = test_database_path(filename_large);
-    const char *path_small = test_database_path(filename_small);
+void run_tests(int mode, const char* mode_desc)
+{
+    char* dest_large, *dest_small, *dest_db;
+    const char* filename_large = "GeoIP2-City-Test.mmdb";
+    const char* filename_small = "MaxMind-DB-test-mixed-24.mmdb";
+    const char* path_large = test_database_path(filename_large);
+    const char* path_small = test_database_path(filename_small);
 
     asprintf(&dest_large, "%s/%s", TMP_DIR, filename_large);
     asprintf(&dest_small, "%s/%s", TMP_DIR, filename_small);
@@ -53,12 +56,11 @@ void run_tests(int mode, const char *mode_desc) {
     int err = cp(path_large, dest_db);
     cmp_ok(err, "==", 0, "Copy database file successful");
 
-    MMDB_s *mmdb = open_ok(dest_db, mode, mode_desc);
+    MMDB_s* mmdb = open_ok(dest_db, mode, mode_desc);
 
-    const char *ip = "::202.196.224.0";
+    const char* ip = "::202.196.224.0";
     int gai_error, mmdb_error;
-    MMDB_lookup_result_s result =
-        MMDB_lookup_string(mmdb, ip, &gai_error, &mmdb_error);
+    MMDB_lookup_result_s result = MMDB_lookup_string(mmdb, ip, &gai_error, &mmdb_error);
 
     cmp_ok(mmdb_error, "==", MMDB_SUCCESS,
            "MMDB_lookup_string sets mmdb_error to MMDB_SUCCESS");
@@ -76,7 +78,7 @@ void run_tests(int mode, const char *mode_desc) {
     cmp_ok(err, "==", 0, "Move database file successful");
 
     for (int i = 0; i < 10; i++) {
-        sleep(2);
+        sleep(1);
         result = MMDB_lookup_string(mmdb, ip, &gai_error, &mmdb_error);
 
         cmp_ok(mmdb_error, "==", MMDB_SUCCESS,
@@ -99,7 +101,8 @@ void run_tests(int mode, const char *mode_desc) {
     free(mmdb);
 }
 
-int main(void) {
+int main(void)
+{
     plan(NO_PLAN);
     for_all_modes(&run_tests);
     done_testing();
