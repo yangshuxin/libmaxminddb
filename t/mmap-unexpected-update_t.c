@@ -57,7 +57,7 @@ int xasprintf(char** strp, const char* fmt, ...)
     if (*strp) {
         strcpy(*strp, buf);
     }
-    return *strdup ? rlen : -1;
+    return *strp ? rlen : -1;
 }
 
 void run_tests(int mode, const char* mode_desc)
