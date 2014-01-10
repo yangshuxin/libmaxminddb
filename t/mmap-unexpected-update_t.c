@@ -4,12 +4,13 @@
 #include <unistd.h>
 #include <sys/uio.h>
 #include <fcntl.h>
+#define _GNU_SOURCE
 #include <stdio.h>
 
 static uint32_t calc_chksum(MMDB_s* mmdb)
 {
     uint32_t sum = 0;
-    uint8_t* p = mmdb->file_content;
+    const uint8_t* p = mmdb->file_content;
     for (int size = mmdb->file_size; --size >= 0;) {
         uint8_t v = p[size];
         sum ^= v;
