@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 static uint32_t calc_chksum(MMDB_s* mmdb)
 {
