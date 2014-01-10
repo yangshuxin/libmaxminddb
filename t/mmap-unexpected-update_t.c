@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <sys/uio.h>
 #include <fcntl.h>
-#define _GNU_SOURCE
 #include <stdio.h>
+#include <stdarg.h>
 
 static uint32_t calc_chksum(MMDB_s* mmdb)
 {
@@ -43,6 +43,18 @@ static int cp(const char* from, const char* to)
 
 #define TMP_DIR "/tmp"
 
+int xasprintf(char** strp, const char* fmt, ...)
+{
+    va_list ap;
+    char buf[2048];
+    int bsize = sizeof(buf);
+    va_start(ap, fmt);
+    int len = vsnprintf(buf, bsize, fmt, ap);
+    va_end(ap);
+    *strp = strdup(buf);
+    return *strdup ? strlen(buf) : -1;
+}
+
 void run_tests(int mode, const char* mode_desc)
 {
     char* dest_large, *dest_small, *dest_db;
@@ -51,9 +63,9 @@ void run_tests(int mode, const char* mode_desc)
     const char* path_large = test_database_path(filename_large);
     const char* path_small = test_database_path(filename_small);
 
-    asprintf(&dest_large, "%s/%s", TMP_DIR, filename_large);
-    asprintf(&dest_small, "%s/%s", TMP_DIR, filename_small);
-    asprintf(&dest_db, "%s/%s", TMP_DIR, "GeoIP2-test-db.mmdb");
+    xasprintf(&dest_large, "%s/%s", TMP_DIR, filename_large);
+    xasprintf(&dest_small, "%s/%s", TMP_DIR, filename_small);
+    xasprintf(&dest_db, "%s/%s", TMP_DIR, "GeoIP2-test-db.mmdb");
     int err = cp(path_large, dest_db);
     cmp_ok(err, "==", 0, "Copy database file successful");
 
