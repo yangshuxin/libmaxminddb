@@ -51,8 +51,12 @@ int xasprintf(char** strp, const char* fmt, ...)
     va_start(ap, fmt);
     int len = vsnprintf(buf, bsize, fmt, ap);
     va_end(ap);
-    *strp = strdup(buf);
-    return *strdup ? strlen(buf) : -1;
+    int rlen = len >= bsize ? bsize : len;
+    *strp = malloc(1 + rlen);
+    if (*strp) {
+        strcpy(*strp, buf);
+    }
+    return *strdup ? rlen : -1;
 }
 
 void run_tests(int mode, const char* mode_desc)
